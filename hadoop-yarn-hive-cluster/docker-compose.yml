@@ -1,0 +1,91 @@
+services:
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode_hive
+    environment:
+      - CLUSTER_NAME=hadoop-cluster
+    volumes:
+      - namenode_data:/hadoop/dfs/name
+    ports:
+      - "9871:9870"  # UI del NameNode
+    networks:
+      - hadoop
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode_hive
+    environment:
+      - CLUSTER_NAME=hadoop-cluster
+      - NAMENODE_HOST=namenode_hive
+    volumes:
+      - datanode_data:/hadoop/dfs/data
+    networks:
+      - hadoop
+
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    container_name: resourcemanager_hive
+    environment:
+      - CLUSTER_NAME=hadoop-cluster
+    ports:
+      - "8089:8088"  # UI de ResourceManager
+    networks:
+      - hadoop
+
+  nodemanager:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    container_name: nodemanager_hive
+    environment:
+      - CLUSTER_NAME=hadoop-cluster
+      - RESOURCEMANAGER_HOST=resourcemanager_hive
+    networks:
+      - hadoop
+
+  historyserver:
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
+    container_name: historyserver_hive
+    environment:
+      - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
+      - CLUSTER_NAME=hadoop-cluster
+      - NAMENODE_HOST=namenode_hive
+    ports:
+      - "8188:8188"  # UI del HistoryServer
+    networks:
+      - hadoop
+
+  hive-server:
+    image: bde2020/hive:2.3.2-postgresql-metastore
+    container_name: hive-server
+#    environment:
+#      - HIVE_HOME=/opt/hive
+#      - HIVE_CONF_DIR=/opt/hive/conf
+#      - HADOOP_HOME=/opt/hadoop
+#      - HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+    environment:
+#      - HIVE_HOME=/opt/hive
+#      - HADOOP_HOME=/opt/hadoop  # Asegúrate de que esta ruta sea correcta
+#      - HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop  # Esta debería contener core-site.xml
+#      - HIVE_CONF_DIR=/opt/hive/conf
+      HIVE_HOME: /opt/hive
+      HADOOP_HOME: /opt/hadoop  # Asegúrate de que esta ruta sea correcta
+      HADOOP_CONF_DIR: /opt/hadoop/etc/hadoop  # Esta debería contener core-site.xml
+      HIVE_CONF_DIR: /opt/hive/conf
+    ports:
+      - "10000:10000"  # Puerto de conexión de Hive
+    volumes:
+      - /home/mike/Docker/hadoop-yarn-hive-cluster/hive-site.xml:/opt/hive/conf/hive-site.xml
+      - /home/mike/Docker/hadoop-yarn-hive-cluster/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+    networks:
+      - hadoop
+    depends_on:
+      - namenode
+      - datanode
+      - resourcemanager
+
+networks:
+  hadoop:
+    driver: bridge
+
+volumes:
+  namenode_data:
+  datanode_data:

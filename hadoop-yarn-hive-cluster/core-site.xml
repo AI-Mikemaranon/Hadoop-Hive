@@ -1,0 +1,7 @@
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://namenode_hive:9870</value>
+  </property>
+</configuration>
+

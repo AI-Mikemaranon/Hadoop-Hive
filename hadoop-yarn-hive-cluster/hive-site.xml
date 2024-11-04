@@ -1,0 +1,21 @@
+<property>
+  <name>hive.server2.thrift.bind.host</name>
+  <value>0.0.0.0</value>
+  <description>Permitir que HiveServer2 escuche en todas las interfaces de red.</description>
+</property>
+<property>
+  <name>hive.server2.thrift.port</name>
+  <value>10000</value>
+</property>
+<property>
+  <name>hive.server2.transport.mode</name>
+  <value>binary</value>
+</property>
+<property>
+  <name>hive.server2.thrift.sasl.qop</name>
+  <value>auth</value>
+</property>
+<property>
+  <name>hive.server2.authentication</name>
+  <value>NONE</value>
+</property>
