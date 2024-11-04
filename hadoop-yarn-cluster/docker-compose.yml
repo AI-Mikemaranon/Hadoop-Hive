@@ -1,0 +1,28 @@
+services:
+  namenode:
+    container_name: namenode_yarn
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    environment:
+      - CLUSTER_NAME=test
+    networks:
+      - hadoop-cluster
+    ports:
+      - "50070:50070"
+
+  datanode:
+    container_name: datanode
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    networks:
+      - hadoop-cluster
+
+  resourcemanager:
+    container_name: resourcemanager
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    networks:
+      - hadoop-cluster
+    ports:
+      - "8088:8088"
+
+networks:
+  hadoop-cluster:
+    external: true
